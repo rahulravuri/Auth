@@ -34,7 +34,7 @@ public class JWTGenerator {
 	
 	public String genJWT(UserModel um) throws NoSuchAlgorithmException {
 			Map<String,Object> jwtData = new HashMap<>();
-	        jwtData.put("email",um.getEmailid());
+	        jwtData.put("user",um.getEmailid());
 	        jwtData.put("User_id",um.getUserid());
 	        jwtData.put("role",um.getUserAccess());
 	        long nowInMillis = System.currentTimeMillis();
