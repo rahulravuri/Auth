@@ -55,29 +55,43 @@ public class AuthFilters extends  OncePerRequestFilter {
 		        	                .parseSignedClaims(i.getValue())
 		        	                .getPayload();
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							System.out.println("funckeds");
+                            ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+							((HttpServletResponse) response).setContentType("application/json");
+							((HttpServletResponse) response).getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+							return ;
 						}
 	        			
 	        		}
 	        	}
 	        		if(claims==null) {
-	        			System.out.println("did you");
-	        			throw new InvalidJwtException("JWT token is missing or invalid"); 
+						((HttpServletResponse) response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+						((HttpServletResponse) response).setContentType("application/json");
+						((HttpServletResponse) response).getWriter().write("{\"error\": \"" +"No Token Please Login" + "\"}");
+						return ;
 	        		
 	        	}
-	        		String username = (String) claims.get("email");
+	        		String username = (String) claims.get("user");
 
-	        		User userDetails = CustomUserDetailService.loadUserByUsername(username);
-	                var authToken = new UsernamePasswordAuthenticationToken(
-	                        userDetails, null, userDetails.getAuthorities());
-	                SecurityContextHolder.getContext().setAuthentication(authToken);
-	                HttpSession session = request.getSession();
-	                session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+					System.out.println(username);
+					try {
+						User userDetails = CustomUserDetailService.loadUserByUsername(username);
+						var authToken = new UsernamePasswordAuthenticationToken(
+								userDetails, null, userDetails.getAuthorities());
+						SecurityContextHolder.getContext().setAuthentication(authToken);
+						HttpSession session = request.getSession();
+						session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-	        			System.out.println(SecurityContextHolder.getContext().getAuthentication());
-	        			
-	        			filterChain.doFilter(request, response);
+						System.out.println(SecurityContextHolder.getContext().getAuthentication());
+
+						filterChain.doFilter(request, response);
+					} catch (Exception e) {
+						((HttpServletResponse) response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+						((HttpServletResponse) response).setContentType("application/json");
+						((HttpServletResponse) response).getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+						return ;
+					}
+
+
 	        }		
 	}
 

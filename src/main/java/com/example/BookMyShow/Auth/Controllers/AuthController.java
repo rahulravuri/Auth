@@ -1,6 +1,5 @@
 package com.example.BookMyShow.Auth.Controllers;
 
-import java.net.http.HttpHeaders;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,21 +7,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.BookMyShow.Auth.DTO.UserDto;
 import com.example.BookMyShow.Auth.DTO.UserLoginDTO;
-import com.example.BookMyShow.Auth.Models.UserModel;
 import com.example.BookMyShow.Auth.Services.UserService;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.example.BookMyShow.Auth.Services.*;
@@ -47,11 +40,10 @@ public class AuthController {
 		try {
 			token = UserService.Login(data);
 			Cookie cookie = new Cookie("Bearer", token);
-			cookie.setHttpOnly(true); // Prevent JavaScript access
-	        cookie.setSecure(true); // Use true if you're on HTTPS
-	        cookie.setPath("/"); // Set the cookie path
-	        cookie.setMaxAge(2* 60 * 60); // Set cookie expiration (1 day)
-			System.out.println("came her");
+			cookie.setHttpOnly(true);
+	        cookie.setSecure(true);
+	        cookie.setPath("/");
+	        cookie.setMaxAge(3600);
 			re.put("Token Status", "Generated");
 			response.addCookie(cookie);
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(re);
@@ -75,7 +67,7 @@ public class AuthController {
 		 return ResponseEntity.status(HttpStatus.ACCEPTED).body(re); }
 		
 		catch(Exception e) {
-			re.put(data.getEmailid(),"User Lready Present");
+			re.put(data.getEmailid(),"User Already Present");
 			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(re);
 			
 		}
@@ -83,17 +75,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/auth")
-	public String auth() {
-		System.out.println("came all the way to here");
+	public String TestAuth() {
 		return "What man What are you expecting";
 
 	}
-	
-	@PostMapping("/auth1")
-	public String auth1() {
-		System.out.println("came all the way to here");
-		return "What man What are you expecting";
-
-	}
-
 }
